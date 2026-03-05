@@ -1,11 +1,12 @@
 {
     "name": "OpenChamber",
     "id": "openchamber",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "Installs opencode and openchamber CLI tools via bun",
     "options": {},
     "dependsOn": {
-        "ghcr.io/roul/devcontainer-features/mise-bun:1": {}
+        "ghcr.io/roul/devcontainer-features/mise-bun:1": {},
+        "ghcr.io/roul/devcontainer-features/mise-python:1": {}
     },
     "installsAfter": [
         "ghcr.io/devcontainers/features/common-utils"

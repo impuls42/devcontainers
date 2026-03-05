@@ -1,12 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-# Install opencode and openchamber globally via bun
-bun install -g opencode@latest
-bun install -g openchamber@latest
+USERNAME="${USERNAME:-"${_REMOTE_USER:-"automatic"}"}"
+
+NODE_PTY_VERSION="${BUN_PTY_VERSION:-"1.1.0"}"
+OPENCODE_VERSION="${OPENCODE_VERSION:-"latest"}"
+OPENCHAMBER_VERSION="${OPENCHAMBER_VERSION:-latest}"
+
+export MISE_VERBOSE=1
 
 # Function to mount auth file - will be injected into shell rc files
-OPENCODE_AUTH_FUNCTION='
+OPENCODE_BASHRC='
+export PATH="${HOME}/.bun/bin:$PATH"
 _opencode_mount_auth() {
     local MOUNTED_FILE="/mnt/opencode-auth.json"
     local TARGET_DIR="${HOME}/.local/share/opencode"
@@ -22,8 +27,17 @@ _opencode_mount_auth() {
 _opencode_mount_auth
 '
 
-BASHRC_PATH="/home/${_REMOTE_USER}/.bashrc"
-echo "$OPENCODE_AUTH_FUNCTION" >> "$BASHRC_PATH"
+install() {
+    sudo -u "${USERNAME}" bash -c "source ~/.bashrc && \
+        bun install -g node-pty@${NODE_PTY_VERSION} && \
+        bun install -g opencode-ai@${OPENCODE_VERSION} && \
+        bun install -g @openchamber/web@${OPENCHAMBER_VERSION}"
 
-ZSHRC_PATH="/home/${_REMOTE_USER}/.zshrc"
-echo "$OPENCODE_AUTH_FUNCTION" >> "$ZSHRC_PATH"
+    sudo -u "${USERNAME}" bash -c "cat >> ~/.bashrc" <<< "$OPENCODE_BASHRC"
+    sudo -u "${USERNAME}" bash -c "cat >> ~/.zshrc" <<< "$OPENCODE_BASHRC"
+
+}
+
+echo "(*) Installing Opencode (${OPENCODE_VERSION}) and Openchamber (${OPENCHAMBER_VERSION}) via bun as default..."
+
+install

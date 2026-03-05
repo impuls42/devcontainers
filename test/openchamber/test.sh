@@ -21,14 +21,15 @@
 #               --base-image mcr.microsoft.com/devcontainers/base:ubuntu \
 #               /path/to/this/repo
 
-set -e
+# set -x
 
 # Optional: Import test library bundled with the devcontainer CLI
 source dev-container-features-test-lib
 
 # Feature-specific tests
-check "opencode is installed" bash -c "which opencode"
-check "openchamber is installed" bash -c "which openchamber"
+check "bun is installed" bash -c "source ~/.bashrc && which bun"
+check "opencode is installed" bash -c "source ~/.bashrc && which opencode"
+check "openchamber is installed" bash -c "source ~/.bashrc && which openchamber"
 
 # Check that the auth function was injected into bashrc
 check "bashrc contains auth function" bash -c "grep '_opencode_mount_auth' ~/.bashrc"
