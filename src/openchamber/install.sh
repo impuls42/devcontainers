@@ -1,8 +1,6 @@
 #!/bin/sh
 set -e
 
-echo "Activating feature 'openchamber'"
-
 # Install opencode and openchamber globally via bun
 bun install -g opencode@latest
 bun install -g openchamber@latest

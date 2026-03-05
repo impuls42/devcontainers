@@ -4,6 +4,9 @@
     "version": "1.0.0",
     "description": "Installs opencode and openchamber CLI tools via bun",
     "options": {},
+    "dependsOn": {
+        "ghcr.io/roul/devcontainer-features/mise-bun:1": {}
+    },
     "installsAfter": [
         "ghcr.io/devcontainers/features/common-utils"
     ]
