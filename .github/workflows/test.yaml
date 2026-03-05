@@ -13,8 +13,7 @@ jobs:
     strategy:
       matrix:
         features:
-          - color
-          - hello
+          - openchamber
         baseImage:
           - debian:latest
           - ubuntu:latest
