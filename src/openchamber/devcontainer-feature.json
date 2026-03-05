@@ -10,5 +10,6 @@
     },
     "installsAfter": [
         "ghcr.io/devcontainers/features/common-utils"
-    ]
+    ],
+    "postStartCommand": "bash /usr/local/share/openchamber/post-start.sh"
 }

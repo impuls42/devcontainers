@@ -27,12 +27,12 @@
 source dev-container-features-test-lib
 
 # Feature-specific tests
-check "bun is installed" bash -c "source ~/.bashrc && which bun"
-check "opencode is installed" bash -c "source ~/.bashrc && which opencode"
-check "openchamber is installed" bash -c "source ~/.bashrc && which openchamber"
+check "bun is installed" which bun
+check "opencode is installed" which opencode
+check "openchamber is installed" which openchamber
 
-# Check that the auth function was injected into bashrc
-check "bashrc contains auth function" bash -c "grep '_opencode_mount_auth' ~/.bashrc"
+# Check that the post-start script exists
+check "post-start script exists" test -f /usr/local/share/openchamber/post-start.sh
 
 # Report results
 reportResults

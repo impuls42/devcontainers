@@ -9,33 +9,23 @@ OPENCHAMBER_VERSION="${OPENCHAMBER_VERSION:-latest}"
 
 export MISE_VERBOSE=1
 
-# Function to mount auth file - will be injected into shell rc files
-OPENCODE_BASHRC='
-export PATH="${HOME}/.bun/bin:$PATH"
-_opencode_mount_auth() {
-    local MOUNTED_FILE="/mnt/opencode-auth.json"
-    local TARGET_DIR="${HOME}/.local/share/opencode"
-    local TARGET_FILE="${TARGET_DIR}/auth.json"
-
-    # Check if the mounted file exists and target file is missing or older
-    if [ -f "$MOUNTED_FILE" ] && ([ ! -f "$TARGET_FILE" ] || [ "$MOUNTED_FILE" -nt "$TARGET_FILE" ]); then
-        mkdir -p "$TARGET_DIR" 2>/dev/null
-        cp "$MOUNTED_FILE" "$TARGET_FILE" 2>/dev/null
-        chmod 600 "$TARGET_FILE" 2>/dev/null
-    fi
-}
-_opencode_mount_auth
-'
+# PATH setup for mise shims and bun global bin
+OPENCODE_PATH='export PATH="${HOME}/.local/share/mise/shims:${HOME}/.bun/bin:$PATH"'
 
 install() {
-    sudo -u "${USERNAME}" bash -c "source ~/.bashrc && \
+    sudo -u "${USERNAME}" bash -c "eval \"\$(mise activate bash)\" && \
         bun install -g node-pty@${NODE_PTY_VERSION} && \
         bun install -g opencode-ai@${OPENCODE_VERSION} && \
         bun install -g @openchamber/web@${OPENCHAMBER_VERSION}"
 
-    sudo -u "${USERNAME}" bash -c "cat >> ~/.bashrc" <<< "$OPENCODE_BASHRC"
-    sudo -u "${USERNAME}" bash -c "cat >> ~/.zshrc" <<< "$OPENCODE_BASHRC"
+    sudo -u "${USERNAME}" bash -c "cat >> ~/.profile" <<< "$OPENCODE_PATH"
+    sudo -u "${USERNAME}" bash -c "cat >> ~/.bashrc" <<< "$OPENCODE_PATH"
+    sudo -u "${USERNAME}" bash -c "cat >> ~/.zshrc" <<< "$OPENCODE_PATH"
 
+    # Install post-start script for auth mounting
+    mkdir -p /usr/local/share/openchamber
+    cp "$(dirname "$0")/post-start.sh" /usr/local/share/openchamber/post-start.sh
+    chmod +x /usr/local/share/openchamber/post-start.sh
 }
 
 echo "(*) Installing Opencode (${OPENCODE_VERSION}) and Openchamber (${OPENCHAMBER_VERSION}) via bun as default..."
